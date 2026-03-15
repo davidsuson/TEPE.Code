@@ -19,9 +19,9 @@ library(chromote)
 
 reports <- read_pc_search_pages("https://www.pc.gov.au/inquiries-and-research/?status=Completed&tab=inquiries", 13) 
 
-subset <- reports[10:15,]
+known_reports <- reports[-c(2:7),]
 
-test <- read_pc_reports(subset)
+test <- read_pc_reports(known_reports)
 
 
 # Two things

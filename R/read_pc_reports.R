@@ -16,6 +16,8 @@ read_pc_reports.data.frame <- function(reports){
       submission_page <- paste0(report_link, "/submissions/")
 
       report_released_date <- read_pc_report_details(report_page)
+
+      # I should add a case to handle if before a certain year?
       submissions <- read_pc_report_submissions(submission_page)
 
       final_report_details <- submissions %>%
