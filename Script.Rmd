@@ -17,65 +17,24 @@ library(chromote)
 
 # Retrieve all report links
 
-reports <-read_pc_search_pages("https://www.pc.gov.au/inquiries-and-research/?status=Completed&tab=inquiries", 13) 
+reports <- read_pc_search_pages("https://www.pc.gov.au/inquiries-and-research/?status=Completed&tab=inquiries", 13) 
 
-```
+subset <- reports[10:15,]
 
-```{r}
+test <- read_pc_reports(subset)
 
-read_PC <- function(table, report_name){
-  
-  caption <- table %>%
-    rvest::html_element("caption") %>%
-    rvest::html_text() %>%
-    stringr::str_extract_all("\\b(before|after)\\b")
 
-  if (is.na(caption)){
-    return(data.frame())
-  }
-
-  rows_with_no_links <- table %>%
-    rvest::html_elements(xpath = ".//tr[not(.//a) and not(.//th)]")
-
-  xml2::xml_remove(rows_with_no_links)
-
-  required_table <- table %>%
-    rvest::html_table() %>%
-    dplyr::mutate(
-      Report = report_name,
-      Year = 2023,
-      Submission_Period = caption,
-      Organisation = "ProductivityComission",
-      Link = table %>% html_elements("tr a") %>% html_attr("href"),
-      Received = as.Date(Received, tryFormats = c("%d/%m/%Y"))
-    ) %>%
-    dplyr::select(-`No.`) %>%
-    dplyr::filter(stringr::str_detect(Link, "\\.pdf$"))
-
-}
+# Two things
+# Get study report page (append submissions/)
+# Get submissions page (append report/)
 
 ```
 
 
+
 ```{r}
 
-test <- read_html("https://www.pc.gov.au/inquiries-and-research/productivity/submissions/")
-
-submission_links <- test %>%
-  html_element("table") %>%
-  html_element("tbody") %>%
-  html_elements("a") %>%
-  html_attr("href")
-
-tables <- test %>%
-  html_elements(xpath = "//table")
-
-report_name <- test %>%
-  html_element("h1") %>%
-  html_text()
-
-test <- lapply(tables, function(x) read_PC(x, report_name))
-
-final_table <- dplyr::bind_rows(test)
+menntaal <- read_pc_report_submissions("https://www.pc.gov.au/inquiries-and-research/water-reform-2024/submissions/")
+prod <- read_pc_report_submissions("https://www.pc.gov.au/inquiries-and-research/productivity/submissions/")
 
 ```
