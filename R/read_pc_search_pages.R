@@ -25,7 +25,8 @@ read_pc_search_pages <- function(search_page_link, max_page){
   }
 
   all_reports <- all_reports_list %>%
-    dplyr::bind_rows()
+    dplyr::bind_rows() %>%
+    dplyr::mutate(Link = paste0("https://www.pc.gov.au", Link))
 
   all_reports
 
