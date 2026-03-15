@@ -15,6 +15,18 @@ read_pc_report_details <- function(report_details_page_link){
     as.Date(date_string, format = "%d/%m/%Y")
   #This function should output a date or string if doesn't exist.
 
+  if (length(report_released_date) == 0){
+
+    report_released_date <- report_details_page %>%
+      rvest::html_elements(xpath = "(//p[not(ancestor::nav)])[1]") %>%
+      rvest::html_text2() %>%
+      sub(".*released on", "", .) %>%
+      trimws() %>%
+      gsub("\\.", "", .) %>%
+      as.Date(format = "%d %B %Y")
+
+  }
+
   report_released_date
 
 }
