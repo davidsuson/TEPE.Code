@@ -14,7 +14,7 @@ read_pc_search_pages <- function(search_page_link, max_page){
 
     all_reports_list[[current_page]] <- page_reports
 
-    cli::cli_alert("Read {current_page} out of {max_page} successfully read!")
+    cli::cli_alert("Read page {current_page} out of {max_page} successfully!")
 
     # This clicks the next page button
     page$click("div.flex.flex-row.gap-5.justify-center.my-5 button:nth-last-child(2)")
