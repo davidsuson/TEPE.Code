@@ -42,6 +42,8 @@ read_pc_reports.data.frame <- function(reports){
 
             cli::cli_alert_success("{report_name} at {report_link} processed succesfully.")
 
+            final_report_details
+
           }
         )
 
