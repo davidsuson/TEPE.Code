@@ -22,7 +22,7 @@ reports <- read_pc_search_pages("https://www.pc.gov.au/inquiries-and-research/?s
 known_reports <- reports[-c(2:7),]
 
 test <- read_pc_reports(known_reports)
-
+test_error <- read_pc_reports(reports[30,])
 
 # Two things
 # Get study report page (append submissions/)

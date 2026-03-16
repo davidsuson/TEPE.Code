@@ -11,33 +11,51 @@ read_pc_reports.data.frame <- function(reports){
       report_name <- report["Name"]
       report_link <- report["Link"]
 
-      pages_suffix <- c(report_page = "/report/", submission_page = "/submissions/")
-      pages <- lapply(pages_suffix, function(page_suffix) paste0(report_link, page_suffix))
-      isvalid <- valid_links(pages)
+      valid_links <- valid_links(report_link)
 
-      if (isvalid){
-        report_released_date <- read_pc_report_details(pages$report_page)
-        submissions <- read_pc_report_submissions(pages$submission_page)
+      if (length(valid_links) != 0){
 
-        final_report_details <- submissions %>%
-          dplyr::mutate(
-            Report_Name = report_name,
-            Report_Link = report_link,
-            Report_Released = report_released_date,
-            Valid = TRUE
-          )
+        final_report_details <- tryCatch(
+          error = function(cnd){
+            cli::cli_alert_danger("{report_name} at {report_link} failed to process.")
 
-        cli::cli_alert_success("{report_name} at {report_link} processed succesfully.")
+            final_report_details <- data.frame(
+              Report_Name = report_name,
+              Report_Link = report_link,
+              Unknown_Error = TRUE
+            )
+
+          },
+          {
+
+            report_released_date <- read_pc_report_details(valid_links$report_page)
+            submissions <- read_pc_report_submissions(valid_links$submission_page)
+
+            final_report_details <- submissions %>%
+              dplyr::mutate(
+                Report_Name = report_name,
+                Report_Link = report_link,
+                Report_Released = report_released_date,
+                Valid_Links = TRUE,
+                Unknown_Error = FALSE
+              )
+
+            cli::cli_alert_success("{report_name} at {report_link} processed succesfully.")
+
+          }
+        )
+
 
       } else {
 
         final_report_details <- data.frame(
           Report_Name = report_name,
           Report_Link = report_link,
-          Valid = FALSE
+          Valid_Links = FALSE,
+          Unknown_Error = FALSE
         )
 
-        cli::cli_alert_danger("{report_name} at {report_link} does not have a submission and/or report page.")
+        cli::cli_alert_danger("{report_name} at {report_link} does not have a submission and/or report page equivalent.")
 
       }
 
